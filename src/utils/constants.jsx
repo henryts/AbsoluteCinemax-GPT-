@@ -10,3 +10,4 @@ export const TDMB_API_OPTIONS = {
   }
 }
 
+export const imageUrl = 'https://image.tmdb.org/t/p/w500/'
