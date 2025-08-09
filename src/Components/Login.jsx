@@ -2,48 +2,84 @@ import React from 'react';
 import { useState,useRef } from 'react';
 import Header from './Header';
 import { validateSignIn } from '../utils/signinValidation';
-import fi
+import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword ,updateProfile } from "firebase/auth";
+import { auth } from '../utils/firebase';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../utils/userSlice';
 const Login = () => {
  
 let [toggle,setToggle]= useState(true);
+let [errorMsg,setErrorMsg] = useState(null);
+const navigate =useNavigate();
 const email = useRef(null);
-const password =useRef(null);   
-
+const password =useRef(null);  
+const firstname = useRef(null); 
+const dispatch = useDispatch();
 const handleformsubmit = ()=>{
-    
-const emailValue = email.current.value;
-const passwordValue = password.current.value;
-console.log("emal==>",emailValue);
-console.log("password==>",passwordValue);
+  const emailValue = email.current.value;
+  const passwordValue = password.current.value;
+  console.log("emal==>", emailValue);
+  console.log("password==>", passwordValue);
 
+  const error = validateSignIn(emailValue, passwordValue);
+  if (Object.keys(error).length > 0) {
+    console.log("Validation Errors:", error);
+  } else {
+    console.log("Form submitted:", {
+      email: emailValue,
+      password: passwordValue,
+    });
+  }
 
+  if (toggle) {
+    //signin
+    console.log("hellooo in signin");
 
- const error = validateSignIn(emailValue,passwordValue);
- if (Object.keys(error).length > 0) {
-      console.log("Validation Errors:", error);
-    } else {
-      console.log("Form submitted:", { email: emailValue, password: passwordValue });
-    }
+    signInWithEmailAndPassword(auth, emailValue, passwordValue)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log("user after signin ====>", user);
+        const { uid, email, displayName } = user;
+        dispatch(addUser({ uid, email, displayName }));
+        navigate("/browse");
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log("error==>", error);
 
-     if(toggle){
+        setErrorMsg(errorMessage);
+      });
+  }
+  if (!toggle) {
+    //sign up
+    console.log("hellooo");
 
+    // const auth = getAuth();
+    createUserWithEmailAndPassword(auth, emailValue, passwordValue)
+      .then((userCredential) => {
+        // Signed up
+        const user = userCredential.user;
+        const { uid, email, displayName } = user;
+         updateProfile(auth.currentUser, {
+         displayName: firstname,
+      // photoURL: "https://example.com/jane-q-user/profile.jpg",
+    });
+        setToggle(true);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log("eror===>", errorMessage + " " + errorCode);
 
+        // ..
+      });
 
-
-
-
-    }
-    if(!toggle){
-
-
-
-
-
-    }
-
-
-
- 
+   
+  }
 }
 
 
@@ -58,7 +94,8 @@ console.log("password==>",passwordValue);
             {!toggle?
             <div>
               <input
-                type="email"
+                ref = {firstname}
+                type="text"
                 placeholder="First Name"
                 className="w-full p-3 rounded bg-[#333] text-white border-none focus:ring-2 focus:ring-red-600"
               />
@@ -89,6 +126,8 @@ console.log("password==>",passwordValue);
             {toggle? "Sign In" : "Sign Up"}
             </button>
           </form>
+           {errorMsg? <div className='text-red-600'>{errorMsg}</div>:""}
+
           <div className="flex justify-between mt-4 text-gray-400 text-sm">
             <label className="flex items-center">
               <input type="checkbox" className="mr-2" />

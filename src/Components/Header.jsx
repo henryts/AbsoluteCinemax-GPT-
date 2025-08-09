@@ -1,8 +1,50 @@
 import React from 'react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { auth } from '../utils/firebase';
+import { signOut } from "firebase/auth";
+import { addUser,removeUser } from '../utils/userSlice';
+import { getAuth, updateProfile,onAuthStateChanged } from "firebase/auth";
 
 function Header() {
+   const navigate =useNavigate();
+ const dispatch = useDispatch();
+
+   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const { uid, email, displayName } = user;
+        navigate("/browse");
+        dispatch(addUser({ uid, email, displayName }));
+         
+      } else {
+
+         navigate("/");
+         dispatch(removeUser());
+
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+
+
+  const handleSignout = () => {
+    signOut(auth)
+      .then(() => {
+        navigate("/");
+        dispatch(removeUser());
+        
+       
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
   return (
-    <header className="bg-black bg-opacity-90 fixed top-0 left-0 w-full flex items-center justify-between px-6 py-4 z-50">
+     <header className="bg-black bg-opacity-90 fixed top-0 left-0 w-full flex items-center justify-between px-6 py-4 z-50">
       {/* Logo Section */}
       <div className="flex items-center">
         <img
@@ -11,24 +53,16 @@ function Header() {
           alt="Logo"
         />
       </div>
-
-      {/* Navigation Links */}
-      <nav className="hidden md:flex space-x-6 text-white font-semibold">
-        <a href="#" className="hover:text-gray-300">Home</a>
-        <a href="#" className="hover:text-gray-300">TV Shows</a>
-        <a href="#" className="hover:text-gray-300">Movies</a>
-        <a href="#" className="hover:text-gray-300">New & Popular</a>
-        <a href="#" className="hover:text-gray-300">My List</a>
-      </nav>
-
       {/* User Actions */}
       <div className="flex items-center space-x-4">
         <button className="text-white hover:text-gray-300">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
+          <img
+  src="https://via.placeholder.com/40" // Replace with your profile image URL
+  alt="User profile"
+  className="w-10 h-10 rounded-full object-cover"
+/>
         </button>
-        <button className="bg-red-600 text-white w-20 h-10 rounded-md hover:bg-red-700 transition">Log In</button>
+        <button className="bg-red-600 text-white w-20 h-10 rounded-md hover:bg-red-700 transition" onClick={handleSignout}>Sign Out</button>
       </div>
     </header>
   );
