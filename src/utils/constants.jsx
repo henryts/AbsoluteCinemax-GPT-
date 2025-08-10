@@ -12,4 +12,3 @@ export const TDMB_API_OPTIONS = {
 
 export const imageUrl = 'https://image.tmdb.org/t/p/w500/'
  
-export const OPENAI_API_KEY ='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'
