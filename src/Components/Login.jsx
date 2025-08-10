@@ -19,9 +19,6 @@ const dispatch = useDispatch();
 const handleformsubmit = ()=>{
   const emailValue = email.current.value;
   const passwordValue = password.current.value;
-  console.log("emal==>", emailValue);
-  console.log("password==>", passwordValue);
-
   const error = validateSignIn(emailValue, passwordValue);
   if (Object.keys(error).length > 0) {
     console.log("Validation Errors:", error);
@@ -34,13 +31,10 @@ const handleformsubmit = ()=>{
 
   if (toggle) {
     //signin
-    console.log("hellooo in signin");
-
-    signInWithEmailAndPassword(auth, emailValue, passwordValue)
+      signInWithEmailAndPassword(auth, emailValue, passwordValue)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log("user after signin ====>", user);
         const { uid, email, displayName } = user;
         dispatch(addUser({ uid, email, displayName }));
         navigate("/browse");
@@ -49,15 +43,13 @@ const handleformsubmit = ()=>{
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log("error==>", error);
+        console.log("error:", error);
 
         setErrorMsg(errorMessage);
       });
   }
   if (!toggle) {
     //sign up
-    console.log("hellooo");
-
     // const auth = getAuth();
     createUserWithEmailAndPassword(auth, emailValue, passwordValue)
       .then((userCredential) => {

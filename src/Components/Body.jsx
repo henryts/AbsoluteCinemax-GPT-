@@ -4,23 +4,26 @@ import Browse from './Browse';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../utils/firebase';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addUser, removeUser } from '../utils/userSlice';
 import { Error } from './Error';
 import Header from './Header';
+import GptSearchBody from './GptSearchBody';
 
 const AppLayout = () => {
+
+  const gptToggle = useSelector((store)=>store.gptSlice.isGptActive);
+  console.log("gptToggle===>",gptToggle);
+  
   return (
     <>
       <Header />
-      <Outlet />
+    {gptToggle? <GptSearchBody/>: <Outlet /> }  
     </>
   );
 };
 
 const Body = () => {
-  const dispatch = useDispatch();
-
 
   const appRouter = createBrowserRouter([
     {

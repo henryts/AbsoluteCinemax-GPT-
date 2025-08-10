@@ -1,15 +1,17 @@
 import React from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { auth } from '../utils/firebase';
 import { signOut } from "firebase/auth";
 import { addUser,removeUser } from '../utils/userSlice';
 import { getAuth, updateProfile,onAuthStateChanged } from "firebase/auth";
+import { toggleGpt } from '../utils/gptSlice';
 
 function Header() {
    const navigate =useNavigate();
- const dispatch = useDispatch();
+   const dispatch = useDispatch();
+   const gptToggle = useSelector((store)=>store.gptSlice.isGptActive);
 
    useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -28,6 +30,10 @@ function Header() {
 
     return () => unsubscribe();
   }, []);
+
+  const handleGptSearch=()=>{
+   dispatch(toggleGpt());
+  }
 
 
 
@@ -53,16 +59,26 @@ function Header() {
           alt="Logo"
         />
       </div>
-      {/* User Actions */}
+      <div>
+  <button  onClick={handleGptSearch} className="bg-red-600 text-white font-semibold ml-250 rounded-lg px-6 py-2 shadow-md hover:bg-red-700 hover:shadow-lg transition-all duration-200">
+  {gptToggle ?'Home':'GPT Search' }
+  </button>
+</div>
+      {/* User Actions */} 
       <div className="flex items-center space-x-4">
         <button className="text-white hover:text-gray-300">
           <img
-  src="https://via.placeholder.com/40" // Replace with your profile image URL
+  src="https://via.placeholder.com/40"
   alt="User profile"
   className="w-10 h-10 rounded-full object-cover"
 />
         </button>
-        <button className="bg-red-600 text-white w-20 h-10 rounded-md hover:bg-red-700 transition" onClick={handleSignout}>Sign Out</button>
+       <button
+  className="bg-red-600 text-white px-5 py-2 w-28 rounded-md font-medium shadow-sm hover:bg-red-700 hover:shadow-md transition-all duration-200"
+  onClick={handleSignout}
+>
+  Sign Out
+</button>
       </div>
     </header>
   );
