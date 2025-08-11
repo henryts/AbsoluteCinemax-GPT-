@@ -1,4 +1,4 @@
-# 🎬 OTT Platform – Netflix Clone with GPT Search
+# 🎬 OTT Platform – Netflix Inspired Project with GPT Search
 
 An OTT streaming platform inspired by **Netflix**, built with modern web technologies.  
 This application not only supports user authentication and personalized movie browsing but also comes with a **⚡ GPT-powered Natural Language Movie Search** that understands your mood and preferences — no need to type exact titles or genres.
