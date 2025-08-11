@@ -12,7 +12,7 @@ Unlike basic keyword searches, GPT understands **context**, **mood**, and **inte
 
 💡 **Example Searches:**
 - *"Give me super horror movies released in 2015"*
-- *"Feeling Shahrukh Khan’s tragic movies"*
+- *"Give Shahrukh Khan’s tragic movies"*
 - *"Fun action-comedies for a weekend night"*
 - *"Oscar-winning dramas from the last decade"*
 
